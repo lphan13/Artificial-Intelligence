@@ -3,8 +3,11 @@ from random import *
 from collections import deque
 import copy
 
+# python program to generate a random 8-puzzle board, determine if it is solvable, and find a solution to the goal state
+
+#puzzleBoard class consisting of children, parent, current grid configuration, # of inversions
 class puzzleBoard:
-    #make list with coordinate positions - ordered triplet
+    #current-state: holding positions (row-major order) of each tile
     current_state = [0, 0, 0, 0, 0, 0, 0, 0, 0]
     children = []
     parent = []
@@ -14,9 +17,9 @@ class puzzleBoard:
     def set_parent(self, state):
         self.parent = state
 
+#method to randomly generate an 8-puzzle board
 def generate():
     board = puzzleBoard()
-    #make list with coordinate positions - ordered triplet
     nums = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0}
     for i in range(0,9):
         while True:
@@ -34,6 +37,7 @@ def generate():
             print("")
     return board
 
+#method to determne whether or not an 8-puzzle is solvable
 def isSolvable(puzzle_state):
     inv_count = 0
     goal =  [0, 1, 2, 3, 5, 8, 7, 6, 4]
@@ -50,23 +54,6 @@ def isSolvable(puzzle_state):
         return True
     else:
         return False
-    '''
-    if test(puzzle_state) == True:
-        return True
-
-    [position = []
-    #checks to see if current puzzle state can be solved
-    #checks if total # of inversions are odd/even
-    #sources https://www.geeksforgeeks.org/check-instance-8-puzzle-solvable/
-    inv_count = 0
-    isSolvable = False
-    for i in range(0,len(puzzle_state)):
-        for j in range(i+1,len(puzzle_state)):
-            if puzzle_state[j][0] and puzzle_state[i][0] and puzzle_state[i][0] < puzzle_state[j][0]:
-                inv_count += 1
-    #print inv_count
-    if inv_count % 2 == 0:
-        isSolvable = True'''
 
 # tests to see if current puzzle state matches the goal state
 def test(puzzle_state):
@@ -79,6 +66,7 @@ def test(puzzle_state):
             return False
     return True
 
+# method to count the number of inversions in a given grid (tiles wth swapped orders)
 def NumInv(board):
     inv_count = 0
     goal =  [0, 1, 2, 3, 5, 8, 7, 6, 4]
@@ -93,9 +81,11 @@ def NumInv(board):
 
     return inv_count
 
+# function to return # of inversions
 def inv(s):
     return s.inv
 
+#function to move right
 def moveR(state, location):
     #switching locations of num and node to its right
     tempNum = state[location + 1]
@@ -127,6 +117,7 @@ def moveU(state, location):
     state[location] = tempNum
     return state
 
+#function to find all children of a board
 def findChildren(board):
     #finding blank space on board
     for i in range(0, len(board.current_state)):
@@ -170,15 +161,21 @@ def findChildren(board):
         left_board.set_parent(board)
 
     board.children.sort(key=inv)
+    # print "sorted kids"
+    #for child in board.children:
+        #printGrid(child.current_state)
+        #print " "
     return board.children
     #assigning existing children to list
 
+#function to print current grid state
 def printGrid(grid):
     for x in range(0,9):
         print grid[x],
         if (x+1) % 3 == 0:
             print("")
 
+#function to solve a given 8-puzzle
 def solve(p1,p2,p3,p4,p5,p6,p7,p8,p9):
 
     board =  puzzleBoard()
@@ -196,9 +193,10 @@ def solve(p1,p2,p3,p4,p5,p6,p7,p8,p9):
     grid[7] = p8
     grid[8] = p9
 
-    print("Grid to solve: ")
-    printGrid(grid)
-    print("")
+    #print("Grid to solve: ")
+    #printGrid(grid)
+    #print "Current number of inversions: ", NumInv(board)
+    #print("")
     #quit if grid is not solvable
     if isSolvable(grid) == False:
         print "unsolvable"
@@ -208,13 +206,23 @@ def solve(p1,p2,p3,p4,p5,p6,p7,p8,p9):
         return
 
     stateSpace = []
+    visited = []
     stateSpace.append(board)
     stop = False
     PtoPrint = []
-
+    print "solving..."
+    print ("")
+    print ("")
+    #continues breadth-first search until goal state is found
     while stop == False:
+        #print("solving...")
+        #retrieving list of chidlren, adding to queue
         board = stateSpace[0]
+        #print("current grid level:")
+        #printGrid(board.current_state)
         findChildren(board)
+        #print "children of grid: "
+        #printGrid(board.current_state)
         for i in range(0, len(board.children)):
             if test(board.children[i].current_state) == True:
                 solved = board.children[i]
@@ -235,41 +243,37 @@ def solve(p1,p2,p3,p4,p5,p6,p7,p8,p9):
     PtoPrint.reverse()
     for state in PtoPrint:
         printGrid(state.current_state)
+
         print " "
 
-
-
+#main method
 def main():
-
-    # START commenting out here if testing custom board
-    '''test_board = generate()
+    test_board = generate()
     print("")
     grid = test_board.current_state
     # initializing random board to parameter vals
-    p1 = grid[0][0]
-    p2 = grid[1][0]
-    p3 = grid[2][0]
-    p4 = grid[3][0]
-    p5 = grid[4][0]
-    p6 = grid[5][0]
-    p7 = grid[6][0]
-    p8 = grid[7][0]
-    p9 = grid[8][0]'''
-    #END commenting out here if testing custom board
-    #test_board = puzzleBoard()
-    #test_state = [[4,0,0],[1,0,1],[2,0,2],[7,1,0],[5,1,1],[3,1,2],[0,2,0],[8,2,1],[6,2,2]]
-    #test_board.current_state = test_state
-    #findChildren(test_board)
+    p1 = grid[0]
+    p2 = grid[1]
+    p3 = grid[2]
+    p4 = grid[3]
+    p5 = grid[4]
+    p6 = grid[5]
+    p7 = grid[6]
+    p8 = grid[7]
+    p9 = grid[8]
+
+
+    # NOTE: since our program utilizes a breadth-first search, the algorithm is rather slow... to run a solvable puzzle with 6 inversions,
+    # the program will take approximately 5 mins. to run as reference.
+
     #solving randomly-generated boards
-    #solve(0, 1, 2, 4, 5, 3, 7, 8, 6)
+    solve(p1,p2,p3,p4,p5,p6,p7,p8,p9)
+
+    # our working test cases:
     #solve(1, 3, 4, 8, 2, 5, 7, 6, 0)
-    solve(1, 3, 0, 8, 2, 4, 7, 6, 5)
+    #solve(1, 3, 0, 8, 2, 4, 7, 6, 5)
     #solve(1,2,3,6,7,4,0,8,5)
-    #solve(p1,p2,p3,p4,p5,p6,p7,p8,p9)
     #solve(1,2,3,8,4,0,7,6,5)
-    #goal_state = [[,0,0],[2,0,1], [3,0,2], [8,1,0], [0,1,1], [4,1,2], [7,2,0], [6,2,1], [5,2,2]]
-    #print isSolvable(goal_state)
     #solve(1,3,4,5,6,0,8,2,7)
-    #solve(grid[0][0], grid[1][0], grid[2][0], grid[3][0], grid[4][0], grid[5][0], grid[6][0], grid[7][0], grid[8][0])
 if __name__ == "__main__":
     main()
