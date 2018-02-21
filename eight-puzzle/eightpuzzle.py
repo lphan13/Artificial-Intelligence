@@ -218,6 +218,7 @@ def solve(p1,p2,p3,p4,p5,p6,p7,p8,p9):
         #print("solving...")
         #retrieving list of chidlren, adding to queue
         board = stateSpace[0]
+        visited.append(board)
         #print("current grid level:")
         #printGrid(board.current_state)
         findChildren(board)
@@ -228,8 +229,8 @@ def solve(p1,p2,p3,p4,p5,p6,p7,p8,p9):
                 solved = board.children[i]
                 stop = True;
             else:
-                stateSpace.append(board.children[i])
-
+                if board.children[i] not in visited and board.children[i] not in stateSpace:
+                    stateSpace.append(board.children[i])
         stateSpace.pop(0)
     print "SOLVED"
     print "path to goal state:"
@@ -245,7 +246,7 @@ def solve(p1,p2,p3,p4,p5,p6,p7,p8,p9):
         printGrid(state.current_state)
 
         print " "
-
+'''
 #main method
 def main():
     test_board = generate()
@@ -262,10 +263,6 @@ def main():
     p8 = grid[7]
     p9 = grid[8]
 
-
-    # NOTE: since our program utilizes a breadth-first search, the algorithm is rather slow... to run a solvable puzzle with 6 inversions,
-    # the program will take approximately 5 mins. to run as reference.
-
     #solving randomly-generated boards
     solve(p1,p2,p3,p4,p5,p6,p7,p8,p9)
 
@@ -275,5 +272,6 @@ def main():
     #solve(1,2,3,6,7,4,0,8,5)
     #solve(1,2,3,8,4,0,7,6,5)
     #solve(1,3,4,5,6,0,8,2,7)
+'''
 if __name__ == "__main__":
     main()
