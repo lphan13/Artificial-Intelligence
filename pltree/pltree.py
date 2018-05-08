@@ -14,7 +14,7 @@ def EI():
 #disjunction
 def D(p, q, unticked):
     unticked.append(p, q)
-    return untcked
+    return unticked
 #non-disjunction
 def ND(p, q, unticked):
     unticked.append("NEG"+p)
